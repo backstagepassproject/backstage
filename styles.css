@@ -39,9 +39,9 @@ img {
   position: sticky;
   top: 0;
   z-index: 10;
-  background: rgba(246, 243, 238, 0.92);
+  background: var(--accent);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .nav {
@@ -70,11 +70,11 @@ img {
   align-items: center;
   gap: 18px;
   font-weight: 500;
-  color: var(--muted);
+  color: var(--accent-soft);
 }
 
 .nav-links a:hover {
-  color: var(--ink);
+  color: #ffe6fb;
 }
 
 .button {
