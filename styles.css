@@ -113,13 +113,13 @@ img {
 }
 
 .nav .button.small {
-  background: var(--accent-soft);
-  color: #d2b48c;
+  background: #e6d5c1;
+  color: var(--accent);
   box-shadow: none;
 }
 
 .nav .button.small:hover {
-  color: #e5c7a3;
+  color: var(--accent);
   transform: translateY(-1px);
 }
 
