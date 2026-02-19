@@ -47,7 +47,7 @@ img {
 .nav {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 16px 24px;
+  padding: 10px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -55,7 +55,7 @@ img {
 }
 
 .logo img {
-  height: 48px;
+  height: 64px;
   width: auto;
 }
 
@@ -110,6 +110,17 @@ img {
 .button.small {
   padding: 10px 16px;
   font-size: 0.95rem;
+}
+
+.nav .button.small {
+  background: var(--accent-soft);
+  color: #d2b48c;
+  box-shadow: none;
+}
+
+.nav .button.small:hover {
+  color: #e5c7a3;
+  transform: translateY(-1px);
 }
 
 .hero {
