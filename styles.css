@@ -112,6 +112,10 @@ img {
   background: var(--accent);
 }
 
+.site-header .nav-toggle span {
+  background: #fffbeb;
+}
+
 .logo img {
   height: 64px;
   width: auto;
@@ -625,8 +629,9 @@ img {
     position: absolute;
     top: 78px;
     right: 16px;
-    background: #fff9df;
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    left: 16px;
+    background: #3d2315;
+    border: 1px solid #6d3f27;
     border-radius: 16px;
     padding: 16px;
     flex-direction: column;
