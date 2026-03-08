@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Donate — The Backstage Pass Project</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --brown: #3d2315; --pink: #ffcff9; --cream: #fff7d3; --gold: #ffd77e; --brown-light: #6b3a22; --brown-mid: #2a1810; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--brown); color: var(--cream); overflow-x: hidden; }
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 1000; opacity: 0.4;
+    }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 999; display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 3rem; background: rgba(61,35,21,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,207,249,0.1); }
+    .nav-logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+    .nav-wordmark { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 700; color: var(--cream); letter-spacing: 0.02em; line-height: 1.2; }
+    .nav-links { display: flex; align-items: center; gap: 2.5rem; list-style: none; }
+    .nav-links a { color: rgba(255,247,211,0.7); text-decoration: none; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--pink); }
+    .nav-cta { background: var(--pink); color: var(--brown) !important; padding: 0.55rem 1.25rem; border-radius: 100px; font-weight: 500 !important; transition: background 0.2s, transform 0.2s !important; }
+    .nav-cta:hover { background: var(--gold) !important; transform: translateY(-1px); color: var(--brown) !important; }
+
+    /* HERO — PINK BG */
+    .page-hero { padding: 10rem 3rem 6rem; background: var(--pink); position: relative; overflow: hidden; }
+    .page-hero::before { content: '$'; position: absolute; right: 2rem; bottom: -3rem; font-family: 'Playfair Display', serif; font-size: clamp(12rem, 22vw, 20rem); font-weight: 900; color: rgba(61,35,21,0.06); line-height: 1; pointer-events: none; }
+    .page-hero-inner { max-width: 760px; position: relative; z-index: 2; }
+    .page-tag { font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--brown-light); font-weight: 500; margin-bottom: 1.25rem; }
+    .page-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.8rem, 6vw, 5.5rem); font-weight: 900; line-height: 1.0; letter-spacing: -0.02em; color: var(--brown); margin-bottom: 1.5rem; }
+    .page-hero h1 em { font-style: italic; color: var(--brown-light); }
+    .page-hero p { font-size: 1.1rem; line-height: 1.8; color: rgba(61,35,21,0.65); max-width: 520px; font-weight: 300; }
+
+    /* DONATE OPTIONS */
+    .donate-section { padding: 6rem 3rem; background: var(--brown); }
+    .donate-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; max-width: 900px; margin: 0 auto; }
+    .donate-card {
+      border-radius: 20px; overflow: hidden;
+      border: 1px solid rgba(255,207,249,0.12);
+      background: rgba(255,207,249,0.02);
+      padding: 3rem;
+      display: flex; flex-direction: column; gap: 1.25rem;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+    .donate-card:hover { border-color: rgba(255,207,249,0.3); transform: translateY(-4px); }
+    .donate-card.featured { background: var(--pink); border-color: var(--pink); }
+    .donate-card-label { font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 500; color: var(--gold); }
+    .donate-card.featured .donate-card-label { color: var(--brown-light); }
+    .donate-card h2 { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 900; line-height: 1.2; color: var(--cream); }
+    .donate-card.featured h2 { color: var(--brown); }
+    .donate-card p { font-size: 0.9rem; line-height: 1.7; color: rgba(255,247,211,0.5); flex: 1; font-weight: 300; }
+    .donate-card.featured p { color: rgba(61,35,21,0.6); }
+    .btn-primary { background: var(--pink); color: var(--brown); padding: 0.9rem 2rem; border-radius: 100px; font-weight: 500; font-size: 0.9rem; text-decoration: none; transition: background 0.2s, transform 0.2s; display: inline-block; text-align: center; }
+    .btn-primary:hover { background: var(--gold); transform: translateY(-2px); }
+    .btn-dark { background: var(--brown); color: var(--cream); padding: 0.9rem 2rem; border-radius: 100px; font-weight: 500; font-size: 0.9rem; text-decoration: none; transition: background 0.2s, transform 0.2s; display: inline-block; text-align: center; }
+    .btn-dark:hover { background: var(--brown-light); transform: translateY(-2px); }
+
+    /* WAYS TO SUPPORT */
+    .ways-section { padding: 6rem 3rem; background: var(--brown-mid); }
+    .ways-header { max-width: 600px; margin-bottom: 3.5rem; }
+    .section-tag { font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); font-weight: 500; margin-bottom: 1rem; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 900; line-height: 1.1; letter-spacing: -0.02em; }
+    .section-title em { font-style: italic; color: var(--pink); }
+    .ways-intro { font-size: 0.95rem; line-height: 1.7; color: rgba(255,247,211,0.5); margin-top: 1rem; max-width: 480px; font-weight: 300; }
+    .ways-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: rgba(255,207,249,0.08); border: 1px solid rgba(255,207,249,0.08); border-radius: 16px; overflow: hidden; max-width: 900px; }
+    .way-card { padding: 2.5rem 2rem; background: var(--brown-mid); transition: background 0.2s; }
+    .way-card:nth-child(even) { background: rgba(255,207,249,0.02); }
+    .way-card:hover { background: rgba(255,207,249,0.05); }
+    .way-icon { font-size: 1.5rem; margin-bottom: 1rem; }
+    .way-card h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 0.6rem; }
+    .way-card p { font-size: 0.85rem; line-height: 1.65; color: rgba(255,247,211,0.45); }
+
+    /* CLOSING CTA */
+    .cta-section { padding: 6rem 3rem; background: var(--brown); text-align: center; }
+    .cta-section h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 900; letter-spacing: -0.02em; margin-bottom: 1rem; }
+    .cta-section h2 em { font-style: italic; color: var(--pink); }
+    .cta-section p { color: rgba(255,247,211,0.55); font-size: 0.95rem; line-height: 1.75; max-width: 480px; margin: 0 auto 2.5rem; font-weight: 300; }
+    .cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-outline { border: 1px solid rgba(255,247,211,0.3); color: var(--cream); padding: 0.9rem 2rem; border-radius: 100px; font-weight: 500; font-size: 0.9rem; text-decoration: none; transition: border-color 0.2s, color 0.2s; display: inline-block; }
+    .btn-outline:hover { border-color: var(--pink); color: var(--pink); }
+
+    footer { background: var(--brown-mid); padding: 4rem 3rem 2.5rem; border-top: 1px solid rgba(255,207,249,0.08); }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 3rem; max-width: 1100px; }
+    .footer-brand p { font-size: 0.85rem; line-height: 1.7; color: rgba(255,247,211,0.45); margin-top: 1rem; max-width: 280px; font-weight: 300; }
+    .footer-col h4 { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); font-weight: 500; margin-bottom: 1.25rem; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+    .footer-col a { color: rgba(255,247,211,0.5); text-decoration: none; font-size: 0.88rem; transition: color 0.2s; }
+    .footer-col a:hover { color: var(--pink); }
+    .footer-bottom { border-top: 1px solid rgba(255,207,249,0.08); padding-top: 2rem; display: flex; align-items: center; justify-content: space-between; font-size: 0.78rem; color: rgba(255,247,211,0.3); flex-wrap: wrap; gap: 1rem; }
+    .footer-logo { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--cream); opacity: 0.5; }
+
+    .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .fade-up.visible { opacity: 1; transform: none; }
+
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .page-hero, .donate-section, .ways-section, .cta-section { padding: 5rem 1.5rem 3rem; }
+      .donate-grid, .ways-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+      .footer-brand { grid-column: 1 / -1; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">
+      <img src="logo.svg" alt="The Backstage Pass Project" style="height:38px;width:auto;">
+    </a>
+    <ul class="nav-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="events.html">Events</a></li>
+      <li><a href="donate.html" class="active">Donate</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="donate.html" class="nav-cta">Give Now</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-hero">
+    <div class="page-hero-inner">
+      <div class="page-tag">Donate</div>
+      <h1>Every door you open<br>changes a <em>life.</em></h1>
+      <p>Your donation provides instruments, creative workshops, youth performances, and music-based wellness programs — giving every young person the chance to learn, create, and shine.</p>
+    </div>
+  </div>
+
+  <!-- DONATE OPTIONS -->
+  <section class="donate-section fade-up">
+    <div class="donate-grid">
+      <div class="donate-card featured">
+        <div class="donate-card-label">One-Time Gift</div>
+        <h2>Make a single contribution</h2>
+        <p>Every contribution helps us keep events welcoming and programs running for youth across Cleveland.</p>
+        <a href="https://www.zeffy.com" target="_blank" class="btn-dark">Donate Now</a>
+      </div>
+      <div class="donate-card">
+        <div class="donate-card-label">Monthly Support</div>
+        <h2>Become a sustaining donor</h2>
+        <p>Join our monthly supporters and build year-round opportunity — your recurring gift powers long-term programming.</p>
+        <a href="https://www.zeffy.com" target="_blank" class="btn-primary">Give Monthly</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- WAYS TO SUPPORT -->
+  <section class="ways-section fade-up">
+    <div class="ways-header">
+      <div class="section-tag">Ways to Support</div>
+      <h2 class="section-title">More ways to<br><em>make an impact.</em></h2>
+      <p class="ways-intro">We are seeking sponsors and partners to help us expand our reach and launch our next phase of programs.</p>
+    </div>
+    <div class="ways-grid">
+      <div class="way-card">
+                <h3>Fund Programs</h3>
+        <p>Support workshops, therapy sessions, and local events for youth in Cleveland and beyond.</p>
+      </div>
+      <div class="way-card">
+                <h3>Donate Instruments</h3>
+        <p>Provide instruments, recording equipment, or studio time directly to kids who need it.</p>
+      </div>
+      <div class="way-card">
+                <h3>Share Opportunities</h3>
+        <p>Offer concert tickets or performance opportunities through partnerships and community connections.</p>
+      </div>
+      <div class="way-card">
+                <h3>Sponsor Events</h3>
+        <p>Support events, creative residencies, or mentorship programs that put youth center stage.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSING CTA -->
+  <section class="cta-section fade-up">
+    <h2>Join the <em>movement.</em></h2>
+    <p>The Backstage Pass Project is just getting started. With your support, we can expand faster, reach farther, and build a legacy of creativity and compassion.</p>
+    <div class="cta-btns">
+      <a href="https://www.zeffy.com" target="_blank" class="btn-primary">Donate Now</a>
+      <a href="https://instagram.com/thebackstagepassproject" target="_blank" class="btn-outline">Follow on Instagram</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">The Backstage Pass Project</div>
+        <p>Opening doors for young creatives to step into the spotlight. Based in Cleveland, OH.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigate</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="events.html">Events</a></li>
+          <li><a href="donate.html">Donate</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Get Involved</h4>
+        <ul>
+          <li><a href="donate.html">Donate</a></li>
+          <li><a href="events.html">Book a Slot</a></li>
+          <li><a href="contact.html">Partner With Us</a></li>
+          <li><a href="contact.html">Volunteer</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="https://instagram.com/thebackstagepassproject" target="_blank">Instagram</a></li>
+          <li><a href="mailto:contact@backstagepassproject.org">Email Us</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 The Backstage Pass Project. All rights reserved.</span>
+      <span>501(c)(3) Nonprofit · EIN 39-4723405 · 509(a)(2)</span>
+    </div>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>

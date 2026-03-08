@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The Backstage Pass Project</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --brown: #3d2315;
+      --pink: #ffcff9;
+      --cream: #fff7d3;
+      --gold: #ffd77e;
+      --brown-light: #6b3a22;
+      --brown-mid: #2a1810;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--brown);
+      color: var(--cream);
+      overflow-x: hidden;
+    }
+
+    /* ---- GRAIN OVERLAY ---- */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.4;
+    }
+
+    /* ---- NAV ---- */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 3rem;
+      background: rgba(61,35,21,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,207,249,0.1);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+
+    .nav-logo img {
+      height: 36px;
+      width: auto;
+      filter: brightness(0) invert(1);
+    }
+
+    .nav-wordmark {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--cream);
+      letter-spacing: 0.02em;
+      line-height: 1.2;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: rgba(255,247,211,0.7);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--pink); }
+
+    .nav-cta {
+      background: var(--pink);
+      color: var(--brown) !important;
+      padding: 0.55rem 1.25rem;
+      border-radius: 100px;
+      font-weight: 500 !important;
+      transition: background 0.2s, transform 0.2s !important;
+    }
+
+    .nav-cta:hover {
+      background: var(--gold) !important;
+      transform: translateY(-1px);
+      color: var(--brown) !important;
+    }
+
+    /* ---- HERO ---- */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      padding: 8rem 3rem 5rem;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 60% 40%, rgba(255,207,249,0.08) 0%, transparent 70%),
+                  radial-gradient(ellipse 60% 80% at 20% 80%, rgba(255,215,126,0.06) 0%, transparent 60%);
+    }
+
+    .hero-number {
+      position: absolute;
+      right: -2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(18rem, 28vw, 30rem);
+      font-weight: 900;
+      color: rgba(255,207,249,0.04);
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+      letter-spacing: -0.05em;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 2;
+      max-width: 760px;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255,207,249,0.12);
+      border: 1px solid rgba(255,207,249,0.25);
+      border-radius: 100px;
+      padding: 0.4rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--pink);
+      margin-bottom: 2rem;
+      animation: fadeUp 0.8s ease both;
+    }
+
+    .hero-tag::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--pink);
+      border-radius: 50%;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 7vw, 6.5rem);
+      font-weight: 900;
+      line-height: 1.0;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.8s 0.1s ease both;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--pink);
+    }
+
+    .hero-sub {
+      font-size: 1.15rem;
+      line-height: 1.7;
+      color: rgba(255,247,211,0.7);
+      max-width: 520px;
+      margin-bottom: 2.5rem;
+      font-weight: 300;
+      animation: fadeUp 0.8s 0.2s ease both;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      animation: fadeUp 0.8s 0.3s ease both;
+    }
+
+    .btn-primary {
+      background: var(--pink);
+      color: var(--brown);
+      padding: 0.9rem 2rem;
+      border-radius: 100px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      text-decoration: none;
+      letter-spacing: 0.03em;
+      transition: background 0.2s, transform 0.2s;
+      display: inline-block;
+    }
+
+    .btn-primary:hover {
+      background: var(--gold);
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      border: 1px solid rgba(255,247,211,0.35);
+      color: var(--cream);
+      padding: 0.9rem 2rem;
+      border-radius: 100px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      text-decoration: none;
+      letter-spacing: 0.03em;
+      transition: border-color 0.2s, color 0.2s, transform 0.2s;
+      display: inline-block;
+    }
+
+    .btn-outline:hover {
+      border-color: var(--pink);
+      color: var(--pink);
+      transform: translateY(-2px);
+    }
+
+    /* ---- PILLARS ROW ---- */
+    .pillars {
+      display: flex;
+      gap: 1px;
+      background: rgba(255,207,249,0.1);
+      border-top: 1px solid rgba(255,207,249,0.1);
+      border-bottom: 1px solid rgba(255,207,249,0.1);
+    }
+
+    .pillar {
+      flex: 1;
+      padding: 2rem 2.5rem;
+      background: var(--brown);
+    }
+
+    .pillar-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    .pillar-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--cream);
+      line-height: 1.3;
+    }
+
+    /* ---- SECTION SHARED ---- */
+    section {
+      padding: 6rem 3rem;
+    }
+
+    .section-tag {
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 500;
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-title em {
+      font-style: italic;
+      color: var(--pink);
+    }
+
+    /* ---- WHY MUSIC ---- */
+    .why-music {
+      background: var(--brown-mid);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .why-music::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(255,207,249,0.05) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .why-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .why-left .section-title { margin-bottom: 2rem; }
+
+    .why-left p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: rgba(255,247,211,0.65);
+      font-weight: 300;
+    }
+
+    .why-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      background: rgba(255,207,249,0.08);
+      border: 1px solid rgba(255,207,249,0.08);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .why-card {
+      background: rgba(61,35,21,0.6);
+      padding: 1.75rem 2rem;
+      transition: background 0.2s;
+    }
+
+    .why-card:hover { background: rgba(61,35,21,0.9); }
+
+    .why-card-icon {
+      font-size: 1.4rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .why-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--cream);
+    }
+
+    .why-card p {
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: rgba(255,247,211,0.55);
+    }
+
+    /* ---- POPUP SECTION ---- */
+    .popup-section {
+      background: var(--brown);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .popup-section::before {
+      content: 'POPUP';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(8rem, 20vw, 18rem);
+      font-weight: 900;
+      color: rgba(255,207,249,0.03);
+      letter-spacing: -0.05em;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .popup-inner {
+      position: relative;
+      z-index: 2;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .popup-inner .section-title { margin-bottom: 1rem; }
+
+    .popup-inner p {
+      color: rgba(255,247,211,0.6);
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+      font-weight: 300;
+    }
+
+    .popup-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 3rem;
+      text-align: left;
+    }
+
+    .popup-card {
+      border: 1px solid rgba(255,207,249,0.12);
+      border-radius: 12px;
+      padding: 1.5rem;
+      background: rgba(255,207,249,0.03);
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .popup-card:hover {
+      border-color: rgba(255,207,249,0.3);
+      background: rgba(255,207,249,0.06);
+    }
+
+    .popup-card-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--pink);
+      font-weight: 500;
+      margin-bottom: 0.75rem;
+    }
+
+    .popup-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+    }
+
+    .popup-card p {
+      font-size: 0.82rem;
+      color: rgba(255,247,211,0.5);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* ---- DONATE STRIP ---- */
+    .donate-strip {
+      background: var(--pink);
+      color: var(--brown);
+      padding: 5rem 3rem;
+      text-align: center;
+    }
+
+    .donate-strip .section-tag { color: var(--brown-light); }
+
+    .donate-strip .section-title {
+      color: var(--brown);
+      max-width: 600px;
+      margin: 0 auto 1.5rem;
+    }
+
+    .donate-strip p {
+      color: rgba(61,35,21,0.7);
+      font-size: 1rem;
+      line-height: 1.7;
+      max-width: 520px;
+      margin: 0 auto 2.5rem;
+      font-weight: 300;
+    }
+
+    .donate-btns {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-dark {
+      background: var(--brown);
+      color: var(--cream);
+      padding: 0.9rem 2rem;
+      border-radius: 100px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+      display: inline-block;
+    }
+
+    .btn-dark:hover {
+      background: var(--brown-light);
+      transform: translateY(-2px);
+    }
+
+    .btn-dark-outline {
+      border: 1.5px solid var(--brown);
+      color: var(--brown);
+      padding: 0.9rem 2rem;
+      border-radius: 100px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+      display: inline-block;
+    }
+
+    .btn-dark-outline:hover {
+      background: rgba(61,35,21,0.08);
+      transform: translateY(-2px);
+    }
+
+    /* ---- FOOTER ---- */
+    footer {
+      background: var(--brown-mid);
+      padding: 4rem 3rem 2.5rem;
+      border-top: 1px solid rgba(255,207,249,0.08);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 3rem;
+      margin-bottom: 3rem;
+      max-width: 1100px;
+    }
+
+    .footer-brand p {
+      font-size: 0.85rem;
+      line-height: 1.7;
+      color: rgba(255,247,211,0.45);
+      margin-top: 1rem;
+      max-width: 280px;
+      font-weight: 300;
+    }
+
+    .footer-col h4 {
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 500;
+      margin-bottom: 1.25rem;
+    }
+
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .footer-col a {
+      color: rgba(255,247,211,0.5);
+      text-decoration: none;
+      font-size: 0.88rem;
+      transition: color 0.2s;
+    }
+
+    .footer-col a:hover { color: var(--pink); }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255,207,249,0.08);
+      padding-top: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: rgba(255,247,211,0.3);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--cream);
+      opacity: 0.5;
+    }
+
+    /* ---- ANIMATIONS ---- */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-up {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .fade-up.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ---- MOBILE ---- */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .hero { padding: 7rem 1.5rem 4rem; }
+      .pillars { flex-direction: column; gap: 0; }
+      section { padding: 4rem 1.5rem; }
+      .why-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .popup-cards { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+      .footer-brand { grid-column: 1 / -1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-logo">
+      <img src="logo.svg" alt="The Backstage Pass Project" style="height:38px;width:auto;">
+    </a>
+    <ul class="nav-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="events.html">Events</a></li>
+      <li><a href="donate.html">Donate</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="donate.html" class="nav-cta">Give Now</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-number"></div>
+    <div class="hero-inner">
+      <div class="hero-tag">501(c)(3) Nonprofit · Cleveland, OH</div>
+      <h1>Opening doors<br>for <em>young</em><br>creatives.</h1>
+      <p class="hero-sub">We connect youth to live events, mentorship, and hands-on experiences that build confidence, community, and career pathways.</p>
+      <div class="hero-actions">
+        <a href="donate.html" class="btn-primary">Donate Now</a>
+        <a href="about.html" class="btn-outline">Learn About Us</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PILLARS -->
+  <div class="pillars">
+    <div class="pillar">
+      <div class="pillar-label">Programs</div>
+      <div class="pillar-text">Live events, workshops & mentorship</div>
+    </div>
+    <div class="pillar" style="background: rgba(255,207,249,0.04);">
+      <div class="pillar-label">Focus</div>
+      <div class="pillar-text">Equity, confidence & creative opportunity</div>
+    </div>
+    <div class="pillar">
+      <div class="pillar-label">Format</div>
+      <div class="pillar-text">Youth-led & youth-driven</div>
+    </div>
+    <div class="pillar" style="background: rgba(255,215,126,0.04);">
+      <div class="pillar-label">Community</div>
+      <div class="pillar-text">Cleveland & beyond</div>
+    </div>
+  </div>
+
+  <!-- WHY MUSIC -->
+  <section class="why-music fade-up">
+    <div class="why-grid">
+      <div class="why-left">
+        <div class="section-tag">Why Music Matters</div>
+        <h2 class="section-title">Music is energy,<br>emotion, and <em>expression.</em></h2>
+        <p>Music helps young people process trauma, build confidence, and connect in ways words cannot. It is not just entertainment — it is a tool for growth.</p>
+      </div>
+      <div class="why-cards">
+        <div class="why-card">
+                    <h3>Stronger Learning</h3>
+          <p>Youth engaged in music show better memory, stronger language skills, improved focus, and higher academic outcomes.</p>
+        </div>
+        <div class="why-card">
+                    <h3>Social & Emotional Growth</h3>
+          <p>Music builds collaboration, discipline, confidence, and emotional regulation — leading to stronger peer connections.</p>
+        </div>
+        <div class="why-card">
+                    <h3>Health & Resilience</h3>
+          <p>Regular engagement reduces stress, supports mood, and offers a healthy outlet for processing emotions.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- POPUP EVENTS -->
+  <section class="popup-section fade-up">
+    <div class="popup-inner">
+      <div class="section-tag">Events</div>
+      <h2 class="section-title">Popup events.<br><em>Dates drop without warning.</em></h2>
+      <p>Locations revealed right before the night. Follow along for surprise popups, limited 10-minute open mic slots, and community moments that go fast.</p>
+      <a href="events.html" class="btn-outline">View Events</a>
+    </div>
+    <div class="popup-cards">
+      <div class="popup-card">
+        <div class="popup-card-label">Announced Soon</div>
+        <h3>Next Popup Open Mic</h3>
+        <p>Dates and locations drop first on Instagram. Limited 10-minute slots fill fast.</p>
+      </div>
+      <div class="popup-card" style="border-color: rgba(255,215,126,0.15);">
+        <div class="popup-card-label" style="color: var(--gold);">Secret Set</div>
+        <h3>Popup Experiences</h3>
+        <p>We reveal each location right before the event. Follow along for the full lineup.</p>
+      </div>
+      <div class="popup-card">
+        <div class="popup-card-label">Stay Ready</div>
+        <h3>Last-Minute Openings</h3>
+        <p>Openings post in real time. Book your slot the moment it appears on the calendar.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DONATE STRIP -->
+  <div class="donate-strip fade-up">
+    <div class="section-tag">Support Our Work</div>
+    <h2 class="section-title">Every donation opens another door.</h2>
+    <p>Your support provides instruments, creative workshops, youth performances, and music-based wellness programs — giving every young person the chance to learn, create, and shine.</p>
+    <div class="donate-btns">
+      <a href="https://www.zeffy.com" target="_blank" class="btn-dark">Make a One-Time Gift</a>
+      <a href="https://www.zeffy.com" target="_blank" class="btn-dark-outline">Become a Monthly Supporter</a>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">The Backstage Pass Project</div>
+        <p>Opening doors for young creatives to step into the spotlight. Based in Cleveland, OH.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigate</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="events.html">Events</a></li>
+          <li><a href="donate.html">Donate</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Get Involved</h4>
+        <ul>
+          <li><a href="donate.html">Donate</a></li>
+          <li><a href="events.html">Book a Slot</a></li>
+          <li><a href="contact.html">Partner With Us</a></li>
+          <li><a href="contact.html">Volunteer</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="https://instagram.com/thebackstagepassproject" target="_blank">Instagram</a></li>
+          <li><a href="mailto:contact@backstagepassproject.org">Email Us</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 The Backstage Pass Project. All rights reserved.</span>
+      <span>501(c)(3) Nonprofit · EIN 39-4723405 · 509(a)(2)</span>
+    </div>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>

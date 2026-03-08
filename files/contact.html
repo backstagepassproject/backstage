@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact — The Backstage Pass Project</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --brown: #3d2315; --pink: #ffcff9; --cream: #fff7d3; --gold: #ffd77e; --brown-light: #6b3a22; --brown-mid: #2a1810; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--brown); color: var(--cream); overflow-x: hidden; }
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 1000; opacity: 0.4;
+    }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 999; display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 3rem; background: rgba(61,35,21,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,207,249,0.1); }
+    .nav-logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+    .nav-wordmark { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 700; color: var(--cream); letter-spacing: 0.02em; line-height: 1.2; }
+    .nav-links { display: flex; align-items: center; gap: 2.5rem; list-style: none; }
+    .nav-links a { color: rgba(255,247,211,0.7); text-decoration: none; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--pink); }
+    .nav-cta { background: var(--pink); color: var(--brown) !important; padding: 0.55rem 1.25rem; border-radius: 100px; font-weight: 500 !important; transition: background 0.2s, transform 0.2s !important; }
+    .nav-cta:hover { background: var(--gold) !important; transform: translateY(-1px); color: var(--brown) !important; }
+
+    /* HERO */
+    .page-hero { padding: 10rem 3rem 6rem; background: var(--brown-mid); position: relative; overflow: hidden; border-bottom: 1px solid rgba(255,207,249,0.08); }
+    .page-hero::before { content: ''; position: absolute; right: 2rem; top: 50%; transform: translateY(-50%); font-size: clamp(12rem, 20vw, 18rem); font-weight: 900; color: rgba(255,207,249,0.03); pointer-events: none; line-height: 1; }
+    .page-hero-inner { max-width: 760px; position: relative; z-index: 2; }
+    .page-tag { font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); font-weight: 500; margin-bottom: 1.25rem; }
+    .page-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.8rem, 6vw, 5.5rem); font-weight: 900; line-height: 1.0; letter-spacing: -0.02em; color: var(--cream); margin-bottom: 1.5rem; }
+    .page-hero h1 em { font-style: italic; color: var(--pink); }
+    .page-hero p { font-size: 1.05rem; line-height: 1.8; color: rgba(255,247,211,0.6); max-width: 480px; font-weight: 300; }
+
+    /* CONTACT MAIN */
+    .contact-section { padding: 6rem 3rem; background: var(--brown); }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; max-width: 1000px; margin: 0 auto; align-items: start; }
+
+    /* INFO SIDE */
+    .contact-info { display: flex; flex-direction: column; gap: 2.5rem; }
+    .contact-block {}
+    .block-label { font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); font-weight: 500; margin-bottom: 0.75rem; }
+    .block-value { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: var(--cream); }
+    .block-value a { color: var(--cream); text-decoration: none; transition: color 0.2s; }
+    .block-value a:hover { color: var(--pink); }
+    .block-sub { font-size: 0.85rem; color: rgba(255,247,211,0.45); margin-top: 0.25rem; font-weight: 300; }
+    .directors-list { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem; }
+    .director-row { font-size: 0.9rem; color: rgba(255,247,211,0.6); }
+
+    /* FORM SIDE */
+    .contact-form { background: rgba(255,207,249,0.03); border: 1px solid rgba(255,207,249,0.1); border-radius: 20px; padding: 2.5rem; }
+    .form-title { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 900; margin-bottom: 1.75rem; letter-spacing: -0.01em; }
+    .form-title em { font-style: italic; color: var(--pink); }
+    .form-group { margin-bottom: 1.25rem; }
+    .form-group label { display: block; font-size: 0.78rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(255,247,211,0.5); margin-bottom: 0.5rem; }
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%;
+      background: rgba(255,247,211,0.04);
+      border: 1px solid rgba(255,207,249,0.12);
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      color: var(--cream);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      transition: border-color 0.2s;
+      appearance: none;
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+      outline: none;
+      border-color: rgba(255,207,249,0.4);
+    }
+    .form-group input::placeholder, .form-group textarea::placeholder { color: rgba(255,247,211,0.25); }
+    .form-group textarea { resize: vertical; min-height: 130px; }
+    .form-group select option { background: var(--brown); color: var(--cream); }
+    .submit-btn {
+      width: 100%;
+      background: var(--pink);
+      color: var(--brown);
+      border: none;
+      border-radius: 100px;
+      padding: 0.95rem 2rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+      margin-top: 0.5rem;
+    }
+    .submit-btn:hover { background: var(--gold); transform: translateY(-2px); }
+    .form-note { font-size: 0.78rem; color: rgba(255,247,211,0.3); text-align: center; margin-top: 1rem; line-height: 1.5; }
+
+    /* OR STRIP */
+    .or-strip { padding: 4rem 3rem; background: var(--brown-mid); text-align: center; border-top: 1px solid rgba(255,207,249,0.06); border-bottom: 1px solid rgba(255,207,249,0.06); }
+    .or-strip p { font-size: 0.88rem; color: rgba(255,247,211,0.4); margin-bottom: 1rem; font-weight: 300; }
+    .email-big { font-family: 'Playfair Display', serif; font-size: clamp(1.2rem, 2.5vw, 1.8rem); font-weight: 700; color: var(--cream); text-decoration: none; transition: color 0.2s; display: inline-block; }
+    .email-big:hover { color: var(--pink); }
+
+    footer { background: var(--brown-mid); padding: 4rem 3rem 2.5rem; border-top: 1px solid rgba(255,207,249,0.08); }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 3rem; max-width: 1100px; }
+    .footer-brand p { font-size: 0.85rem; line-height: 1.7; color: rgba(255,247,211,0.45); margin-top: 1rem; max-width: 280px; font-weight: 300; }
+    .footer-col h4 { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); font-weight: 500; margin-bottom: 1.25rem; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+    .footer-col a { color: rgba(255,247,211,0.5); text-decoration: none; font-size: 0.88rem; transition: color 0.2s; }
+    .footer-col a:hover { color: var(--pink); }
+    .footer-bottom { border-top: 1px solid rgba(255,207,249,0.08); padding-top: 2rem; display: flex; align-items: center; justify-content: space-between; font-size: 0.78rem; color: rgba(255,247,211,0.3); flex-wrap: wrap; gap: 1rem; }
+    .footer-logo { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--cream); opacity: 0.5; }
+
+    .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .fade-up.visible { opacity: 1; transform: none; }
+
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .page-hero, .contact-section { padding: 5rem 1.5rem 3rem; }
+      .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+      .footer-brand { grid-column: 1 / -1; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">
+      <img src="logo.svg" alt="The Backstage Pass Project" style="height:38px;width:auto;">
+    </a>
+    <ul class="nav-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="events.html">Events</a></li>
+      <li><a href="donate.html">Donate</a></li>
+      <li><a href="contact.html" class="active">Contact</a></li>
+      <li><a href="donate.html" class="nav-cta">Give Now</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-hero">
+    <div class="page-hero-inner">
+      <div class="page-tag">Contact</div>
+      <h1>Let's<br><em>connect.</em></h1>
+      <p>Want to partner, volunteer, or invite us to your event? Reach out and we will follow up within two business days.</p>
+    </div>
+  </div>
+
+  <section class="contact-section fade-up">
+    <div class="contact-grid">
+      <div class="contact-info">
+        <div class="contact-block">
+          <div class="block-label">Email</div>
+          <div class="block-value"><a href="mailto:contact@backstagepassproject.org">contact@backstagepassproject.org</a></div>
+          <div class="block-sub">Response within 2 business days</div>
+        </div>
+        <div class="contact-block">
+          <div class="block-label">Social</div>
+          <div class="block-value"><a href="https://instagram.com/thebackstagepassproject" target="_blank">@thebackstagepassproject</a></div>
+          <div class="block-sub">Follow for event drops & announcements</div>
+        </div>
+        <div class="contact-block">
+          <div class="block-label">Co-Directors</div>
+          <div class="directors-list">
+            <div class="director-row">Casie Baker</div>
+            <div class="director-row">Chase Takaoka</div>
+            <div class="director-row">Colson Baker</div>
+          </div>
+        </div>
+        <div class="contact-block">
+          <div class="block-label">Organization</div>
+          <div class="block-value" style="font-size:0.95rem;">501(c)(3) Nonprofit</div>
+          <div class="block-sub">EIN 39-4723405 · 509(a)(2)</div>
+        </div>
+      </div>
+
+      <div class="contact-form">
+        <h2 class="form-title">Send us a <em>message.</em></h2>
+        <form action="mailto:contact@backstagepassproject.org" method="POST" enctype="text/plain">
+          <div class="form-group">
+            <label>Name</label>
+            <input type="text" name="name" placeholder="Your name" required>
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" placeholder="your@email.com" required>
+          </div>
+          <div class="form-group">
+            <label>What brings you here?</label>
+            <select name="inquiry">
+              <option value="" disabled selected>Select one</option>
+              <option>Partner with us</option>
+              <option>Volunteer</option>
+              <option>Invite us to an event</option>
+              <option>Sponsorship inquiry</option>
+              <option>Media / Press</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Message</label>
+            <textarea name="message" placeholder="Tell us what you have in mind..." required></textarea>
+          </div>
+          <button type="submit" class="submit-btn">Send Message</button>
+        </form>
+        <p class="form-note">We respond within two business days.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="or-strip fade-up">
+    <p>Or reach us directly at</p>
+    <a href="mailto:contact@backstagepassproject.org" class="email-big">contact@backstagepassproject.org</a>
+  </div>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">The Backstage Pass Project</div>
+        <p>Opening doors for young creatives to step into the spotlight. Based in Cleveland, OH.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigate</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="events.html">Events</a></li>
+          <li><a href="donate.html">Donate</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Get Involved</h4>
+        <ul>
+          <li><a href="donate.html">Donate</a></li>
+          <li><a href="events.html">Book a Slot</a></li>
+          <li><a href="contact.html">Partner With Us</a></li>
+          <li><a href="contact.html">Volunteer</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="https://instagram.com/thebackstagepassproject" target="_blank">Instagram</a></li>
+          <li><a href="mailto:contact@backstagepassproject.org">Email Us</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 The Backstage Pass Project. All rights reserved.</span>
+      <span>501(c)(3) Nonprofit · EIN 39-4723405 · 509(a)(2)</span>
+    </div>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>

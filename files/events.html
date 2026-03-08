@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Events — The Backstage Pass Project</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --brown: #3d2315; --pink: #ffcff9; --cream: #fff7d3; --gold: #ffd77e; --brown-light: #6b3a22; --brown-mid: #2a1810; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--brown); color: var(--cream); overflow-x: hidden; }
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 1000; opacity: 0.4;
+    }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 999; display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 3rem; background: rgba(61,35,21,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,207,249,0.1); }
+    .nav-logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+    .nav-wordmark { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 700; color: var(--cream); letter-spacing: 0.02em; line-height: 1.2; }
+    .nav-links { display: flex; align-items: center; gap: 2.5rem; list-style: none; }
+    .nav-links a { color: rgba(255,247,211,0.7); text-decoration: none; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--pink); }
+    .nav-cta { background: var(--pink); color: var(--brown) !important; padding: 0.55rem 1.25rem; border-radius: 100px; font-weight: 500 !important; transition: background 0.2s, transform 0.2s !important; }
+    .nav-cta:hover { background: var(--gold) !important; transform: translateY(-1px); color: var(--brown) !important; }
+
+    /* PAGE HERO */
+    .page-hero { padding: 10rem 3rem 5rem; background: var(--brown-mid); position: relative; overflow: hidden; border-bottom: 1px solid rgba(255,207,249,0.08); }
+    .page-hero::before { content: '11'; position: absolute; right: 3rem; bottom: -2rem; font-family: 'Playfair Display', serif; font-size: clamp(10rem, 20vw, 18rem); font-weight: 900; color: rgba(255,207,249,0.04); line-height: 1; pointer-events: none; }
+    .page-hero-inner { max-width: 760px; position: relative; z-index: 2; }
+    .page-tag { font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); font-weight: 500; margin-bottom: 1.25rem; }
+    .page-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.8rem, 6vw, 5.5rem); font-weight: 900; line-height: 1.0; letter-spacing: -0.02em; margin-bottom: 1.5rem; }
+    .page-hero h1 em { font-style: italic; color: var(--pink); }
+    .page-hero p { font-size: 1.05rem; line-height: 1.8; color: rgba(255,247,211,0.6); max-width: 520px; font-weight: 300; }
+
+    /* NEXT EVENT SPOTLIGHT */
+    .spotlight { padding: 5rem 3rem; background: var(--brown); }
+    .spotlight-card {
+      max-width: 1000px; margin: 0 auto;
+      border: 1px solid rgba(255,207,249,0.15);
+      border-radius: 20px; overflow: hidden;
+      display: grid; grid-template-columns: auto 1fr;
+      background: rgba(255,207,249,0.02);
+    }
+    .spotlight-date {
+      background: var(--pink); color: var(--brown);
+      padding: 3rem 2.5rem;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      min-width: 160px; text-align: center;
+    }
+    .spotlight-date .month { font-size: 0.8rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.25rem; }
+    .spotlight-date .day { font-family: 'Playfair Display', serif; font-size: 5rem; font-weight: 900; line-height: 1; }
+    .spotlight-date .year { font-size: 0.85rem; font-weight: 400; opacity: 0.6; margin-top: 0.25rem; }
+    .spotlight-info { padding: 3rem; }
+    .spotlight-label { font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); font-weight: 500; margin-bottom: 1rem; }
+    .spotlight-info h2 { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 900; margin-bottom: 0.75rem; letter-spacing: -0.01em; }
+    .spotlight-info h2 em { font-style: italic; color: var(--pink); }
+    .spotlight-info p { font-size: 0.92rem; line-height: 1.7; color: rgba(255,247,211,0.55); margin-bottom: 1.75rem; font-weight: 300; }
+    .spotlight-meta { display: flex; gap: 2rem; flex-wrap: wrap; margin-bottom: 2rem; }
+    .meta-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: rgba(255,247,211,0.6); }
+    .meta-item span:first-child { opacity: 0.5; }
+    .btn-primary { background: var(--pink); color: var(--brown); padding: 0.9rem 2rem; border-radius: 100px; font-weight: 500; font-size: 0.9rem; text-decoration: none; transition: background 0.2s, transform 0.2s; display: inline-block; }
+    .btn-primary:hover { background: var(--gold); transform: translateY(-2px); }
+    .btn-outline { border: 1px solid rgba(255,247,211,0.3); color: var(--cream); padding: 0.9rem 2rem; border-radius: 100px; font-weight: 500; font-size: 0.9rem; text-decoration: none; transition: border-color 0.2s, color 0.2s; display: inline-block; }
+    .btn-outline:hover { border-color: var(--pink); color: var(--pink); }
+    .btn-row { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+    /* HOW IT WORKS */
+    .how-section { padding: 6rem 3rem; background: var(--brown-mid); }
+    .how-header { max-width: 600px; margin-bottom: 3.5rem; }
+    .section-tag { font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); font-weight: 500; margin-bottom: 1rem; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 900; line-height: 1.1; letter-spacing: -0.02em; }
+    .section-title em { font-style: italic; color: var(--pink); }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(255,207,249,0.08); border: 1px solid rgba(255,207,249,0.08); border-radius: 16px; overflow: hidden; max-width: 1000px; }
+    .step { padding: 2.5rem 2rem; background: var(--brown-mid); }
+    .step:nth-child(2) { background: rgba(255,207,249,0.03); }
+    .step-num { font-family: 'Playfair Display', serif; font-size: 3.5rem; font-weight: 900; color: rgba(255,207,249,0.1); line-height: 1; margin-bottom: 1rem; }
+    .step h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 0.75rem; }
+    .step p { font-size: 0.88rem; line-height: 1.65; color: rgba(255,247,211,0.5); }
+
+    /* BOOKING */
+    .booking-section { padding: 6rem 3rem; background: var(--brown); }
+    .booking-inner { max-width: 900px; margin: 0 auto; }
+    .booking-top { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; margin-bottom: 3rem; }
+    .booking-top p { font-size: 0.95rem; line-height: 1.75; color: rgba(255,247,211,0.55); font-weight: 300; }
+    .booking-note { background: rgba(255,215,126,0.08); border: 1px solid rgba(255,215,126,0.2); border-radius: 12px; padding: 1.25rem 1.5rem; font-size: 0.85rem; color: rgba(255,247,211,0.6); line-height: 1.6; margin-top: 1.5rem; }
+    .booking-note strong { color: var(--gold); }
+    .calendly-embed { background: rgba(255,207,249,0.03); border: 1px solid rgba(255,207,249,0.1); border-radius: 16px; padding: 3rem; text-align: center; }
+    .calendly-embed p { color: rgba(255,247,211,0.45); font-size: 0.88rem; line-height: 1.6; margin-bottom: 1.5rem; }
+    .calendly-link { color: var(--pink); font-size: 0.85rem; text-decoration: none; }
+    .calendly-link:hover { text-decoration: underline; }
+
+    /* INSTAGRAM STRIP */
+    .ig-strip { background: var(--pink); color: var(--brown); padding: 4rem 3rem; text-align: center; }
+    .ig-strip h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 900; margin-bottom: 0.75rem; letter-spacing: -0.02em; }
+    .ig-strip p { font-size: 0.95rem; line-height: 1.7; color: rgba(61,35,21,0.65); max-width: 440px; margin: 0 auto 2rem; font-weight: 300; }
+    .btn-dark { background: var(--brown); color: var(--cream); padding: 0.9rem 2rem; border-radius: 100px; font-weight: 500; font-size: 0.9rem; text-decoration: none; transition: background 0.2s, transform 0.2s; display: inline-block; }
+    .btn-dark:hover { background: var(--brown-light); transform: translateY(-2px); }
+
+    footer { background: var(--brown-mid); padding: 4rem 3rem 2.5rem; border-top: 1px solid rgba(255,207,249,0.08); }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 3rem; max-width: 1100px; }
+    .footer-brand p { font-size: 0.85rem; line-height: 1.7; color: rgba(255,247,211,0.45); margin-top: 1rem; max-width: 280px; font-weight: 300; }
+    .footer-col h4 { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); font-weight: 500; margin-bottom: 1.25rem; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+    .footer-col a { color: rgba(255,247,211,0.5); text-decoration: none; font-size: 0.88rem; transition: color 0.2s; }
+    .footer-col a:hover { color: var(--pink); }
+    .footer-bottom { border-top: 1px solid rgba(255,207,249,0.08); padding-top: 2rem; display: flex; align-items: center; justify-content: space-between; font-size: 0.78rem; color: rgba(255,247,211,0.3); flex-wrap: wrap; gap: 1rem; }
+    .footer-logo { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--cream); opacity: 0.5; }
+
+    .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .fade-up.visible { opacity: 1; transform: none; }
+
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .page-hero, .spotlight, .how-section, .booking-section { padding: 5rem 1.5rem 3rem; }
+      .spotlight-card { grid-template-columns: 1fr; }
+      .spotlight-date { padding: 2rem; flex-direction: row; gap: 1rem; }
+      .steps { grid-template-columns: 1fr; }
+      .booking-top { grid-template-columns: 1fr; gap: 2rem; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+      .footer-brand { grid-column: 1 / -1; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">
+      <img src="logo.svg" alt="The Backstage Pass Project" style="height:38px;width:auto;">
+    </a>
+    <ul class="nav-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="events.html" class="active">Events</a></li>
+      <li><a href="donate.html">Donate</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="donate.html" class="nav-cta">Give Now</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-hero">
+    <div class="page-hero-inner">
+      <div class="page-tag">Events</div>
+      <h1>Popup events.<br><em>Dates drop<br>without warning.</em></h1>
+      <p>We host intimate, high-impact gatherings throughout the year. Each event connects youth with mentors and new creative experiences.</p>
+    </div>
+  </div>
+
+  <!-- NEXT EVENT -->
+  <section class="spotlight fade-up">
+    <div class="spotlight-card">
+      <div class="spotlight-date">
+        <div class="month">April</div>
+        <div class="day">11</div>
+        <div class="year">2025</div>
+      </div>
+      <div class="spotlight-info">
+        <div class="spotlight-label">Next Event · Announced</div>
+        <h2>Open Mic Night at <em>27 Club Coffee</em></h2>
+        <p>A free community open mic night with limited 10-minute performance slots and a raffle. Doors are open to everyone — $10 donation holds your slot on stage.</p>
+        <div class="spotlight-meta">
+          <div class="meta-item"><span></span><span>27 Club Coffee, Cleveland, OH</span></div>
+          <div class="meta-item"><span></span><span>Free entry / $10 for a 10-min slot</span></div>
+          <div class="meta-item"><span></span><span>Raffle included</span></div>
+        </div>
+        <div class="btn-row">
+          <a href="https://calendly.com/backstagepassproject/10" target="_blank" class="btn-primary">Book a Slot</a>
+          <a href="https://instagram.com/thebackstagepassproject" target="_blank" class="btn-outline">Follow on Instagram</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how-section fade-up">
+    <div class="how-header">
+      <div class="section-tag">How It Works</div>
+      <h2 class="section-title">Stay ready.<br><em>Openings go fast.</em></h2>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Follow on Instagram</h3>
+        <p>New popup dates and locations drop first on Instagram. That's where announcements happen in real time.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>Watch for the Drop</h3>
+        <p>Location is revealed right before the event. Limited 10-minute slots go live the moment the date is announced.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>Book Your Slot</h3>
+        <p>A $10 donation holds your 10-minute slot. Select your date, time, and location in the booking calendar.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOOKING -->
+  <section class="booking-section fade-up">
+    <div class="booking-inner">
+      <div class="booking-top">
+        <div>
+          <div class="section-tag">Reserve a Slot</div>
+          <h2 class="section-title" style="font-family:'Playfair Display',serif;font-size:clamp(1.8rem,3vw,2.4rem);font-weight:900;line-height:1.15;letter-spacing:-0.02em;margin-bottom:1rem;">Sign up for a<br><em style="color:var(--pink)">popup event.</em></h2>
+          <p>Reserve a 10-minute open mic slot on popup days only. New popup dates are posted on Instagram first — check back for openings.</p>
+          <div class="booking-note">
+            <strong>Note:</strong> A $10 donation holds your 10-minute slot. We will never share your information. You can also reach us at <a href="mailto:contact@backstagepassproject.org" style="color:var(--gold);">contact@backstagepassproject.org</a>
+          </div>
+        </div>
+        <div class="calendly-embed">
+          <p>New popup dates are posted on Instagram first. Check back here for calendar openings.</p>
+          <a href="https://calendly.com/backstagepassproject/10" target="_blank" class="btn-primary" style="margin-bottom:1.25rem;display:inline-block;">Open Booking Calendar</a>
+          <br>
+          <a href="https://calendly.com/backstagepassproject/10" target="_blank" class="calendly-link">calendly.com/backstagepassproject/10</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTAGRAM -->
+  <div class="ig-strip fade-up">
+    <h2>Follow along for the full lineup.</h2>
+    <p>Locations revealed right before the event. Follow us for partner announcements, last-minute openings, and community moments.</p>
+    <a href="https://instagram.com/thebackstagepassproject" target="_blank" class="btn-dark">@thebackstagepassproject</a>
+  </div>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">The Backstage Pass Project</div>
+        <p>Opening doors for young creatives to step into the spotlight. Based in Cleveland, OH.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigate</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="events.html">Events</a></li>
+          <li><a href="donate.html">Donate</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Get Involved</h4>
+        <ul>
+          <li><a href="donate.html">Donate</a></li>
+          <li><a href="events.html">Book a Slot</a></li>
+          <li><a href="contact.html">Partner With Us</a></li>
+          <li><a href="contact.html">Volunteer</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="https://instagram.com/thebackstagepassproject" target="_blank">Instagram</a></li>
+          <li><a href="mailto:contact@backstagepassproject.org">Email Us</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 The Backstage Pass Project. All rights reserved.</span>
+      <span>501(c)(3) Nonprofit · EIN 39-4723405 · 509(a)(2)</span>
+    </div>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
