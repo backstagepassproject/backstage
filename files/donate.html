@@ -100,6 +100,7 @@
     @media (max-width: 768px) {
       nav { padding: 1rem 1.5rem; }
       .nav-links { display: none; }
+      .nav-toggle { display: flex; }
       .page-hero, .donate-section, .ways-section, .cta-section { padding: 5rem 1.5rem 3rem; }
       .donate-grid, .ways-grid { grid-template-columns: 1fr; }
       .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
@@ -113,6 +114,11 @@
     <a href="index.html" class="nav-logo">
       <img src="logo.svg" alt="The Backstage Pass Project">
     </a>
+    <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
     <ul class="nav-links">
       <li><a href="about.html">About</a></li>
       <li><a href="events.html">Events</a></li>
@@ -120,6 +126,13 @@
       <li><a href="contact.html">Contact</a></li>
       <li><a href="donate.html" class="nav-cta">Give Now</a></li>
     </ul>
+    <div class="nav-mobile" id="navMobile" aria-hidden="true">
+      <a href="about.html">About</a>
+      <a href="events.html">Events</a>
+      <a href="donate.html">Donate</a>
+      <a href="contact.html">Contact</a>
+      <a href="donate.html" class="nav-cta">Give Now</a>
+    </div>
   </nav>
 
   <div class="page-hero">
@@ -224,6 +237,17 @@
   </footer>
 
   <script>
+
+    const navToggle = document.querySelector('.nav-toggle');
+    const navMobile = document.getElementById('navMobile');
+    if (navToggle && navMobile) {
+      navToggle.addEventListener('click', () => {
+        const isOpen = navMobile.classList.toggle('open');
+        navToggle.setAttribute('aria-expanded', String(isOpen));
+        navMobile.setAttribute('aria-hidden', String(!isOpen));
+      });
+    }
+
     const observer = new IntersectionObserver(entries => {
       entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
     }, { threshold: 0.1 });
